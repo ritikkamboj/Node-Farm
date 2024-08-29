@@ -1,7 +1,6 @@
 //Blocking syanchronous approach
 const fs = require("fs");
 const http = require("http");
-const { json } = require("stream/consumers");
 const url = require("url");
 // const textIn = fs.readFileSync('./txt/input.txt', 'utf-8');
 // console.log(textIn);
@@ -34,22 +33,56 @@ const url = require("url");
 // SERVER
 
 //belowe is creating of the server
-const data =fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+
+function replaceTemplate(temp, product) {
+  let output = temp.replace(/{%PRODUCT_NAME%}/g, product.productName);
+  output = output.replace(/{%IMAGE%}/g, product.image);
+  output = output.replace(/{%QUANTITY%}/g, product.quantity);
+  output = output.replace(/{%PRICE%}/g, product.price);
+  output = output.replace(/{%ID%}/g, product.id);
+
+  return output;
+}
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+// console.log(data);
+
+const tempOverview = fs.readFileSync(
+  `${__dirname}/templates/template-overview.html`,
+  "utf-8"
+);
+const tempCard = fs.readFileSync(
+  `${__dirname}/templates/template-card.html`,
+  "utf-8"
+);
+const tempProduct = fs.readFileSync(
+  `${__dirname}/templates/template-product.html`,
+  "utf-8"
+);
+
+// console.log(tempOverview);
+
 const dataObj = JSON.parse(data);
+// console.log(dataObj);
 
 const server = http.createServer((req, res) => {
   console.log(req.url, "ritik");
   if (req.url === "/" || req.url === "/overview") {
-    res.end("OverView");
+    res.writeHead(200, { "content-type": "text/html" });
+    const cardHtml = dataObj
+      .map((el) => replaceTemplate(tempCard, el))
+      .join("");
+    console.log(cardHtml);
+    const output = tempOverview.replace("{%PRODUCT_CARDS%}", cardHtml);
+
+    res.end(output);
   } else if (req.url === "/product") {
     res.end("this is the Product");
   } else if (req.url === "/url") {
     // fs.readFile(`${__dirname}/dev-data/data.json`, "utf-8", (err, data) => {
     //   const productData = JSON.parse(data);
-      res.writeHead(200, { "content-type": "application.json" });
-      res.end(data);
+    res.writeHead(200, { "content-type": "application.json" });
+    res.end(data);
     //   console.log(productData);
-    
   } else {
     res.writeHead(404, {
       "content-type": "text/html",
