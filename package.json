@@ -1,0 +1,18 @@
+{
+  "name": "node-farm",
+  "version": "1.0.0",
+  "description": "node.js begining",
+  "main": "index.js",
+  "scripts": {
+   
+    "start": "nodemon index.js"
+  },
+  "author": "aashish kumar",
+  "license": "ISC",
+  "dependencies": {
+    "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
