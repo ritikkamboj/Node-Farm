@@ -41,6 +41,10 @@ function replaceTemplate(temp, product) {
   output = output.replace(/{%PRICE%}/g, product.price);
   output = output.replace(/{%ID%}/g, product.id);
 
+  if (!product.organic) {
+    output = output.replace(/{%ORGANIC%}/g, "not-organic");
+  }
+
   return output;
 }
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
